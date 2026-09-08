@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>INDEX | Gestión de Estudiantes</title>
+<style>
+:root{
+  --azul:#0f4c81; --azul2:#1e6bb8; --amarillo:#f6c744; --fondo:#f4f7fb;
+  --texto:#1f2937; --muted:#6b7280; --blanco:#fff; --verde:#15803d;
+  --rojo:#b91c1c; --borde:#d9e1ea;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,Arial,Helvetica,sans-serif;background:var(--fondo);color:var(--texto)}
+.hidden{display:none!important}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:linear-gradient(135deg,#0f4c81,#16385f)}
+.login-card{width:min(430px,100%);background:#fff;border-radius:22px;padding:34px;box-shadow:0 22px 60px rgba(0,0,0,.25)}
+.brand{display:flex;align-items:center;gap:14px;margin-bottom:24px}
+.logo{width:58px;height:58px;border-radius:16px;background:var(--amarillo);display:grid;place-items:center;font-weight:900;font-size:26px;color:var(--azul)}
+.brand h1{margin:0;font-size:26px;color:var(--azul)}
+.brand p{margin:4px 0 0;color:var(--muted);font-size:14px}
+.field{margin:14px 0}
+.field label{display:block;font-weight:700;font-size:14px;margin-bottom:6px}
+.field input,.field select,.field textarea{
+  width:100%;padding:12px 13px;border:1px solid var(--borde);border-radius:12px;background:#fff;outline:none
+}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--azul2);box-shadow:0 0 0 3px rgba(30,107,184,.12)}
+.primary{border:0;background:var(--azul);color:white;padding:12px 16px;border-radius:12px;font-weight:800}
+.secondary{border:1px solid var(--borde);background:white;color:var(--texto);padding:10px 14px;border-radius:10px;font-weight:700}
+.warning{border:0;background:var(--amarillo);color:#3b2f00;padding:10px 14px;border-radius:10px;font-weight:800}
+.danger{border:0;background:#fee2e2;color:var(--rojo);padding:9px 12px;border-radius:9px;font-weight:800}
+.success{border:0;background:#dcfce7;color:var(--verde);padding:10px 14px;border-radius:10px;font-weight:800}
+.login-card .primary{width:100%;margin-top:8px}
+.small{font-size:12px;color:var(--muted)}
+.error{color:var(--rojo);font-size:13px;font-weight:700;min-height:20px}
+.app{min-height:100vh;display:grid;grid-template-columns:260px 1fr}
+.sidebar{background:#0d365c;color:white;padding:20px 16px;position:sticky;top:0;height:100vh;overflow:auto}
+.side-brand{display:flex;align-items:center;gap:10px;margin-bottom:20px;padding:6px}
+.side-brand .logo{width:42px;height:42px;border-radius:12px;font-size:20px}
+.side-brand h2{margin:0;font-size:19px}
+.side-brand span{font-size:12px;color:#c9d8e8}
+.nav-title{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:#a9c0d7;margin:18px 10px 8px}
+.nav-btn{width:100%;text-align:left;background:transparent;color:#eaf3fb;border:0;padding:10px 12px;border-radius:10px;margin:2px 0}
+.nav-btn:hover,.nav-btn.active{background:rgba(255,255,255,.12)}
+.sidebar-footer{margin-top:22px;border-top:1px solid rgba(255,255,255,.15);padding-top:16px}
+.main{padding:24px 28px 40px;min-width:0}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:20px}
+.topbar h1{margin:0;font-size:28px;color:var(--azul)}
+.topbar p{margin:4px 0 0;color:var(--muted)}
+.actions{display:flex;gap:10px;flex-wrap:wrap}
+.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:18px 0}
+.card{background:white;border:1px solid var(--borde);border-radius:16px;padding:18px;box-shadow:0 4px 16px rgba(15,76,129,.05)}
+.card .num{font-size:28px;font-weight:900;color:var(--azul)}
+.card .lbl{font-size:13px;color:var(--muted);margin-top:5px}
+.panel{background:white;border:1px solid var(--borde);border-radius:16px;padding:18px;box-shadow:0 4px 16px rgba(15,76,129,.05)}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-bottom:14px}
+.toolbar-left,.toolbar-right{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.search{min-width:260px;padding:10px 12px;border:1px solid var(--borde);border-radius:10px}
+.course-select{padding:10px 12px;border:1px solid var(--borde);border-radius:10px;background:white;font-weight:700}
+.table-wrap{overflow:auto;border:1px solid var(--borde);border-radius:12px}
+table{width:100%;border-collapse:collapse;min-width:1050px}
+th,td{padding:11px 10px;border-bottom:1px solid #e9eef4;text-align:left;font-size:13px;vertical-align:top}
+th{background:#f0f5fa;color:#31506e;position:sticky;top:0}
+tr:hover td{background:#fbfdff}
+.badge{display:inline-block;padding:5px 8px;border-radius:999px;font-size:11px;font-weight:800}
+.badge-activo{background:#dcfce7;color:#166534}
+.badge-seguimiento{background:#fef3c7;color:#92400e}
+.badge-cerrado{background:#e5e7eb;color:#374151}
+.modal-bg{position:fixed;inset:0;background:rgba(2,12,27,.55);display:flex;align-items:center;justify-content:center;padding:18px;z-index:50}
+.modal{background:white;border-radius:18px;width:min(900px,100%);max-height:92vh;overflow:auto;padding:22px}
+.modal-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}
+.modal-head h2{margin:0;color:var(--azul)}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.full{grid-column:1/-1}
+.modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:16px}
+.empty{padding:34px;text-align:center;color:var(--muted)}
+.note{background:#fff8db;border:1px solid #f2d66f;border-radius:12px;padding:12px 14px;font-size:13px;color:#5c4b00;margin-top:12px}
+.toast{position:fixed;right:20px;bottom:20px;background:#0f172a;color:white;padding:12px 16px;border-radius:10px;box-shadow:0 8px 30px rgba(0,0,0,.2);z-index:100;opacity:0;transform:translateY(10px);transition:.25s}
+.toast.show{opacity:1;transform:translateY(0)}
+@media(max-width:980px){
+  .app{grid-template-columns:1fr}.sidebar{position:relative;height:auto}.cards{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:650px){
+  .main{padding:18px 12px}.cards{grid-template-columns:1fr}.grid{grid-template-columns:1fr}.full{grid-column:auto}.topbar{align-items:flex-start;flex-direction:column}
+}
+</style>
+</head>
+<body>
+
+<section id="login" class="login-wrap">
+  <div class="login-card">
+    <div class="brand">
+      <div class="logo">I</div>
+      <div>
+        <h1>INDEX</h1>
+        <p>Gestión y seguimiento de estudiantes</p>
+      </div>
+    </div>
+    <div class="field">
+      <label>Usuario</label>
+      <input id="loginUser" autocomplete="username" placeholder="Ingrese usuario">
+    </div>
+    <div class="field">
+      <label>Contraseña</label>
+      <input id="loginPass" type="password" autocomplete="current-password" placeholder="Ingrese contraseña">
+    </div>
+    <div id="loginError" class="error"></div>
+    <button class="primary" onclick="login()">Ingresar</button>
+    <div class="note">
+      <b>Cuenta inicial:</b> usuario <b>convivencia</b> · contraseña <b>index2026</b><br>
+      Puede cambiarse desde “Configuración”.
+    </div>
+  </div>
+</section>
+
+<section id="app" class="app hidden">
+  <aside class="sidebar">
+    <div class="side-brand">
+      <div class="logo">I</div>
+      <div><h2>INDEX</h2><span>Gestión escolar</span></div>
+    </div>
+    <button class="nav-btn active" data-course="TODOS" onclick="setCourse('TODOS',this)">📊 Panel general</button>
+    <div class="nav-title">Cursos</div>
+    <div id="courseNav"></div>
+    <div class="nav-title">Herramientas</div>
+    <button class="nav-btn" onclick="openSettings()">⚙️ Configuración</button>
+    <button class="nav-btn" onclick="exportBackup()">💾 Respaldo de datos</button>
+    <button class="nav-btn" onclick="document.getElementById('importFile').click()">📥 Importar respaldo</button>
+    <input id="importFile" type="file" accept=".json" class="hidden" onchange="importBackup(event)">
+    <div class="sidebar-footer">
+      <button class="nav-btn" onclick="logout()">↩ Cerrar sesión</button>
+      <div class="small" style="color:#bcd0e4;padding:8px 12px">Datos guardados en este navegador.</div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div>
+        <h1 id="pageTitle">Panel general</h1>
+        <p id="pageSubtitle">Visualización de todos los cursos.</p>
+      </div>
+      <div class="actions">
+        <button class="warning" onclick="openStudentModal()">＋ Nuevo estudiante</button>
+      </div>
+    </div>
+
+    <div class="cards">
+      <div class="card"><div class="num" id="totalStudents">0</div><div class="lbl">Estudiantes registrados</div></div>
+      <div class="card"><div class="num" id="activeCases">0</div><div class="lbl">Registros activos</div></div>
+      <div class="card"><div class="num" id="followCases">0</div><div class="lbl">En seguimiento</div></div>
+      <div class="card"><div class="num" id="courseCount">12</div><div class="lbl">Cursos disponibles</div></div>
+    </div>
+
+    <section class="panel">
+      <div class="toolbar">
+        <div class="toolbar-left">
+          <input id="search" class="search" placeholder="Buscar por nombre, RUT o apoderado..." oninput="render()">
+          <select id="statusFilter" class="course-select" onchange="render()">
+            <option value="">Todos los estados</option>
+            <option>Activo</option>
+            <option>En seguimiento</option>
+            <option>Cerrado</option>
+          </select>
+        </div>
+        <div class="toolbar-right">
+          <button class="success" onclick="downloadCourseExcel()">⬇ Descargar Excel del curso</button>
+          <button class="secondary" onclick="downloadAllExcel()">⬇ Excel general</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Curso</th><th>Estudiante</th><th>RUT</th><th>Apoderado/a</th>
+              <th>Teléfono</th><th>Último registro</th><th>Estado</th><th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="studentRows"></tbody>
+        </table>
+      </div>
+      <div id="empty" class="empty hidden">No hay registros para mostrar.</div>
+      <div class="note">
+        <b>Importante:</b> esta versión guarda la información en el navegador del equipo donde se utiliza. Para evitar pérdidas, use “Respaldo de datos” periódicamente. Si desea que varios computadores compartan la misma información, la plataforma debe conectarse a una base de datos en línea.
+      </div>
+    </section>
+  </main>
+</section>
+
+<div id="studentModal" class="modal-bg hidden">
+  <div class="modal">
+    <div class="modal-head">
+      <h2 id="modalTitle">Nuevo estudiante</h2>
+      <button class="secondary" onclick="closeStudentModal()">✕</button>
+    </div>
+    <div class="grid">
+      <input id="editId" type="hidden">
+      <div class="field"><label>Curso *</label><select id="fCourse"></select></div>
+      <div class="field"><label>Estado</label>
+        <select id="fStatus"><option>Activo</option><option>En seguimiento</option><option>Cerrado</option></select>
+      </div>
+      <div class="field"><label>Nombre completo *</label><input id="fName"></div>
+      <div class="field"><label>RUT</label><input id="fRut"></div>
+      <div class="field"><label>Nombre apoderado/a</label><input id="fGuardian"></div>
+      <div class="field"><label>Teléfono</label><input id="fPhone"></div>
+      <div class="field"><label>Correo</label><input id="fEmail" type="email"></div>
+      <div class="field"><label>Fecha del registro</label><input id="fDate" type="date"></div>
+      <div class="field full"><label>Motivo / antecedente</label><textarea id="fReason" rows="3"></textarea></div>
+      <div class="field full"><label>Intervención realizada</label><textarea id="fIntervention" rows="3"></textarea></div>
+      <div class="field full"><label>Acuerdos / seguimiento</label><textarea id="fFollowup" rows="3"></textarea></div>
+      <div class="field full"><label>Observaciones</label><textarea id="fNotes" rows="3"></textarea></div>
+    </div>
+    <div class="modal-actions">
+      <button class="secondary" onclick="closeStudentModal()">Cancelar</button>
+      <button class="primary" onclick="saveStudent()">Guardar información</button>
+    </div>
+  </div>
+</div>
+
+<div id="settingsModal" class="modal-bg hidden">
+  <div class="modal" style="width:min(520px,100%)">
+    <div class="modal-head"><h2>Configuración de acceso</h2><button class="secondary" onclick="closeSettings()">✕</button></div>
+    <div class="field"><label>Nuevo usuario</label><input id="newUser"></div>
+    <div class="field"><label>Nueva contraseña</label><input id="newPass" type="password"></div>
+    <div class="note">Esta cuenta funciona como acceso básico a esta copia local. No reemplaza un sistema de autenticación profesional con servidor.</div>
+    <div class="modal-actions"><button class="secondary" onclick="closeSettings()">Cancelar</button><button class="primary" onclick="saveSettings()">Guardar cuenta</button></div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+const COURSES = ['5°A','5°B','5°C','6°A','6°B','6°C','7°A','7°B','7°C','8°A','8°B','8°C'];
+const DBKEY='index_students_v2';
+const AUTHKEY='index_auth_v1';
+let currentCourse='TODOS';
+
+function getAuth(){
+  return JSON.parse(localStorage.getItem(AUTHKEY) || '{"user":"convivencia","pass":"index2026"}');
+}
+function getStudents(){ return JSON.parse(localStorage.getItem(DBKEY) || '[]'); }
+function setStudents(v){ localStorage.setItem(DBKEY, JSON.stringify(v)); }
+function toast(msg){
+  const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2200);
+}
+function login(){
+  const a=getAuth(), u=document.getElementById('loginUser').value.trim(), p=document.getElementById('loginPass').value;
+  if(u===a.user && p===a.pass){
+    sessionStorage.setItem('index_logged','1');
+    document.getElementById('login').classList.add('hidden');
+    document.getElementById('app').classList.remove('hidden');
+    init();
+  } else document.getElementById('loginError').textContent='Usuario o contraseña incorrectos.';
+}
+function logout(){
+  sessionStorage.removeItem('index_logged'); location.reload();
+}
+function init(){
+  document.getElementById('courseNav').innerHTML = COURSES.map(c=>`<button class="nav-btn" data-course="${c}" onclick="setCourse('${c}',this)">🎓 ${c}</button>`).join('');
+  document.getElementById('fCourse').innerHTML = COURSES.map(c=>`<option>${c}</option>`).join('');
+  render();
+}
+function setCourse(c,el){
+  currentCourse=c;
+  document.querySelectorAll('.nav-btn[data-course]').forEach(x=>x.classList.remove('active'));
+  if(el) el.classList.add('active');
+  document.getElementById('pageTitle').textContent = c==='TODOS' ? 'Panel general' : `Curso ${c}`;
+  document.getElementById('pageSubtitle').textContent = c==='TODOS' ? 'Visualización de todos los cursos.' : `Gestión de estudiantes y registros de ${c}.`;
+  render();
+}
+function filtered(){
+  let data=getStudents();
+  const q=document.getElementById('search').value.trim().toLowerCase();
+  const st=document.getElementById('statusFilter').value;
+  if(currentCourse!=='TODOS') data=data.filter(x=>x.course===currentCourse);
+  if(st) data=data.filter(x=>x.status===st);
+  if(q) data=data.filter(x=>[x.name,x.rut,x.guardian,x.phone,x.email].some(v=>(v||'').toLowerCase().includes(q)));
+  return data.sort((a,b)=>(a.name||'').localeCompare(b.name||'','es'));
+}
+function render(){
+  const all=getStudents();
+  const data=filtered();
+  document.getElementById('totalStudents').textContent = currentCourse==='TODOS' ? all.length : all.filter(x=>x.course===currentCourse).length;
+  const scoped=currentCourse==='TODOS'?all:all.filter(x=>x.course===currentCourse);
+  document.getElementById('activeCases').textContent = scoped.filter(x=>x.status==='Activo').length;
+  document.getElementById('followCases').textContent = scoped.filter(x=>x.status==='En seguimiento').length;
+  document.getElementById('courseCount').textContent = currentCourse==='TODOS'?COURSES.length:1;
+  const tbody=document.getElementById('studentRows');
+  tbody.innerHTML=data.map(s=>`
+    <tr>
+      <td><b>${esc(s.course)}</b></td>
+      <td><b>${esc(s.name)}</b></td>
+      <td>${esc(s.rut||'')}</td>
+      <td>${esc(s.guardian||'')}</td>
+      <td>${esc(s.phone||'')}</td>
+      <td>${esc(s.date||'')}</td>
+      <td><span class="badge ${badgeClass(s.status)}">${esc(s.status||'Activo')}</span></td>
+      <td>
+        <button class="secondary" onclick="editStudent('${s.id}')">Editar</button>
+        <button class="danger" onclick="deleteStudent('${s.id}')">Eliminar</button>
+      </td>
+    </tr>`).join('');
+  document.getElementById('empty').classList.toggle('hidden',data.length>0);
+}
+function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+function badgeClass(s){return s==='Cerrado'?'badge-cerrado':s==='En seguimiento'?'badge-seguimiento':'badge-activo'}
+function openStudentModal(course){
+  document.getElementById('modalTitle').textContent='Nuevo estudiante';
+  document.getElementById('editId').value='';
+  ['fName','fRut','fGuardian','fPhone','fEmail','fReason','fIntervention','fFollowup','fNotes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('fCourse').value = course || (currentCourse==='TODOS'?'5°A':currentCourse);
+  document.getElementById('fStatus').value='Activo';
+  document.getElementById('fDate').value=new Date().toISOString().slice(0,10);
+  document.getElementById('studentModal').classList.remove('hidden');
+}
+function closeStudentModal(){document.getElementById('studentModal').classList.add('hidden')}
+function saveStudent(){
+  const name=document.getElementById('fName').value.trim(), course=document.getElementById('fCourse').value;
+  if(!name||!course){toast('Complete nombre y curso.');return}
+  const id=document.getElementById('editId').value || (Date.now().toString(36)+Math.random().toString(36).slice(2,7));
+  const obj={
+    id,course,name,
+    status:document.getElementById('fStatus').value,
+    rut:document.getElementById('fRut').value.trim(),
+    guardian:document.getElementById('fGuardian').value.trim(),
+    phone:document.getElementById('fPhone').value.trim(),
+    email:document.getElementById('fEmail').value.trim(),
+    date:document.getElementById('fDate').value,
+    reason:document.getElementById('fReason').value.trim(),
+    intervention:document.getElementById('fIntervention').value.trim(),
+    followup:document.getElementById('fFollowup').value.trim(),
+    notes:document.getElementById('fNotes').value.trim()
+  };
+  const data=getStudents(), idx=data.findIndex(x=>x.id===id);
+  if(idx>=0)data[idx]=obj;else data.push(obj);
+  setStudents(data); closeStudentModal(); render(); toast('Información guardada correctamente.');
+}
+function editStudent(id){
+  const s=getStudents().find(x=>x.id===id); if(!s)return;
+  document.getElementById('modalTitle').textContent='Editar estudiante';
+  document.getElementById('editId').value=s.id;
+  document.getElementById('fCourse').value=s.course;
+  document.getElementById('fStatus').value=s.status||'Activo';
+  document.getElementById('fName').value=s.name||'';
+  document.getElementById('fRut').value=s.rut||'';
+  document.getElementById('fGuardian').value=s.guardian||'';
+  document.getElementById('fPhone').value=s.phone||'';
+  document.getElementById('fEmail').value=s.email||'';
+  document.getElementById('fDate').value=s.date||'';
+  document.getElementById('fReason').value=s.reason||'';
+  document.getElementById('fIntervention').value=s.intervention||'';
+  document.getElementById('fFollowup').value=s.followup||'';
+  document.getElementById('fNotes').value=s.notes||'';
+  document.getElementById('studentModal').classList.remove('hidden');
+}
+function deleteStudent(id){
+  if(!confirm('¿Eliminar este registro? Esta acción no se puede deshacer.'))return;
+  setStudents(getStudents().filter(x=>x.id!==id)); render(); toast('Registro eliminado.');
+}
+function openSettings(){
+  const a=getAuth(); document.getElementById('newUser').value=a.user; document.getElementById('newPass').value=a.pass;
+  document.getElementById('settingsModal').classList.remove('hidden');
+}
+function closeSettings(){document.getElementById('settingsModal').classList.add('hidden')}
+function saveSettings(){
+  const user=document.getElementById('newUser').value.trim(), pass=document.getElementById('newPass').value;
+  if(!user||!pass){toast('Usuario y contraseña son obligatorios.');return}
+  localStorage.setItem(AUTHKEY,JSON.stringify({user,pass}));closeSettings();toast('Cuenta actualizada.');
+}
+function exportBackup(){
+  const payload={version:2,exportedAt:new Date().toISOString(),students:getStudents(),auth:getAuth()};
+  downloadBlob(JSON.stringify(payload,null,2),'INDEX_respaldo_'+new Date().toISOString().slice(0,10)+'.json','application/json');
+}
+function importBackup(ev){
+  const f=ev.target.files[0]; if(!f)return;
+  const r=new FileReader(); r.onload=()=>{
+    try{
+      const o=JSON.parse(r.result);
+      if(!Array.isArray(o.students))throw new Error();
+      if(confirm('¿Importar este respaldo? Reemplazará los datos actuales.')){
+        setStudents(o.students); if(o.auth)localStorage.setItem(AUTHKEY,JSON.stringify(o.auth)); render(); toast('Respaldo importado.');
+      }
+    }catch(e){alert('El archivo no corresponde a un respaldo válido de INDEX.')}
+    ev.target.value='';
+  }; r.readAsText(f);
+}
+function downloadCourseExcel(){
+  if(currentCourse==='TODOS'){ alert('Seleccione primero un curso en el menú izquierdo para descargar solamente ese curso.'); return; }
+  const data=getStudents().filter(x=>x.course===currentCourse);
+  downloadExcelXML(data,`INDEX_${sanitize(currentCourse)}.xls`, `Curso ${currentCourse}`);
+}
+function downloadAllExcel(){
+  downloadExcelXML(getStudents(),`INDEX_TODOS_LOS_CURSOS.xls`,'Todos los cursos');
+}
+function xmlEscape(s){return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function sanitize(s){return String(s).replace(/[^\wÁÉÍÓÚáéíóúÑñ-]+/g,'_')}
+function downloadExcelXML(data, filename, sheetName){
+  const headers=['Curso','Nombre completo','RUT','Apoderado/a','Teléfono','Correo','Fecha','Estado','Motivo / antecedente','Intervención realizada','Acuerdos / seguimiento','Observaciones'];
+  const rows=data.map(s=>[s.course,s.name,s.rut,s.guardian,s.phone,s.email,s.date,s.status,s.reason,s.intervention,s.followup,s.notes]);
+  const cell=v=>`<Cell><Data ss:Type="String">${xmlEscape(v)}</Data></Cell>`;
+  const xml=`<?xml version="1.0"?>
+  <?mso-application progid="Excel.Sheet"?>
+  <Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+   xmlns:o="urn:schemas-microsoft-com:office:office"
+   xmlns:x="urn:schemas-microsoft-com:office:excel"
+   xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">
+   <Worksheet ss:Name="${xmlEscape(sheetName.slice(0,31))}">
+    <Table>
+      <Row>${headers.map(h=>cell(h)).join('')}</Row>
+      ${rows.map(r=>`<Row>${r.map(cell).join('')}</Row>`).join('')}
+    </Table>
+   </Worksheet>
+  </Workbook>`;
+  downloadBlob(xml,filename,'application/vnd.ms-excel');
+}
+function downloadBlob(content,name,type){
+  const blob=new Blob([content],{type}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name;
+  document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1200);
+}
+if(sessionStorage.getItem('index_logged')==='1'){
+  document.getElementById('login').classList.add('hidden');document.getElementById('app').classList.remove('hidden');init();
+}
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){closeStudentModal();closeSettings()}
+  if(e.key==='Enter'&&!document.getElementById('login').classList.contains('hidden'))login();
+});
+</script>
+</body>
+</html>
